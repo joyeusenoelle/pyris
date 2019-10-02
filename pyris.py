@@ -15,12 +15,21 @@ class Citation:
 			self.fn, self.ext = ".".join(chunks[:-1]), chunks[-1]
 		else: # has one period in filename
 			self.fn, self.ext = chunks[0], chunks[1]
+		with open(filename, 'r') as f:
+			self.contents = f.read()
+		self.outfile = self.fn + ".ris"
 
 	def toString(self):
-		return "Current file: {}.{}".format(self.fn, self.ext)
+		rstr = "Current infile: {}.{}".format(self.fn, self.ext)
+		rstr += "\n"
+		rstr += "Current outfile: {}".format(self.outfile)
+		return rstr
 
 	def print(self):
-		print("Current file: {}.{}").format(self.fn, self.ext)
+		rstr = "Current infile: {}.{}".format(self.fn, self.ext)
+		rstr += "\n"
+		rstr += "Current outfile: {}".format(self.outfile)
+		print(rstr)
 
 def main(filename):
 	cite = Citation(filename)
