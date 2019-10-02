@@ -26,8 +26,8 @@ class Citation:
 
 	def getAuthors(self):
 		astr = ""
-		for author in self.authors:
-			astr += "A1  - {}\n".format(author)
+		for author in self.authors.values():
+			astr += "AU  - {}\n".format(author)
 		return astr
 
 	def addType(self, ctype):
@@ -49,7 +49,7 @@ class Citation:
 		self.date.info = "" if info == None else info
 
 	def getDate(self):
-		return "CY  - {}/{}/{}/{}\n".format(self.date.year, self.date.month, self.date.day, self.date.info)
+		return "PY  - {}/{}/{}/{}\n".format(self.date.year, self.date.month, self.date.day, self.date.info)
 
 
 class CiteList:
@@ -66,6 +66,32 @@ class CiteList:
 		with open(filename, 'r') as f:
 			self.contents = f.read()
 		self.outfile = self.fn + ".ris"
+
+	def loadCitations(self):
+		""" Create citations from self.content.
+		Input: each citation in EndNote format begins with ^PT
+			   and ends with ^ER
+			   There's a blank line between records that can be discarded
+		"""
+		lines = self.contents.split("\n")
+		cite = Citation()
+		authors = False
+		title = False
+		sTitle = ""
+		for line in lines:
+			if line == "PT J":
+				cite.addType("JOUR")
+			if line[:2] == "AF": # we're on authors
+				authors = True
+				cite.addAuthor(line[3:])
+			elif authors and line[:2] == "  ": # another author
+				cite.addAuthor(line[3:])
+			elif authors:
+				authors = False
+			if line[:2] == "TI": # we're on the title
+				title = True
+				cite.addTitle(line[])
+
 
 	def toString(self):
 		rstr = "Current infile: {}.{}".format(self.fn, self.ext)
