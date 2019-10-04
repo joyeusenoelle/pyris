@@ -79,6 +79,8 @@ class CiteList:
 		title = False
 		sTitle = ""
 		for line in lines:
+			if line.strip() == "": # it's a blank line and can be discarded
+				continue
 			if line == "PT J":
 				cite.addType("JOUR")
 			if line[:2] == "AF": # we're on authors
